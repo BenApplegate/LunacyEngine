@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LunacyEngine", "LunacyEngine\LunacyEngine.csproj", "{333A23FB-1051-4FDF-8310-C9E2D64A087B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lunacy", "Lunacy\Lunacy.csproj", "{333A23FB-1051-4FDF-8310-C9E2D64A087B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleGame", "SampleGame\SampleGame.csproj", "{248EEC8F-BD6C-4EA2-A3F2-7DBACEAE9ACB}"
 EndProject
