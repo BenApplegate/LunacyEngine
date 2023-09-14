@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 
-namespace Lunacy.Core;
+namespace Lunacy.Utils;
 
-public class Log
+public class Logger
 {
     
 #pragma warning disable CS8620
