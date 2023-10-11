@@ -6,8 +6,16 @@ namespace Lunacy.Core;
 public static class LunacyEngine
 {
     internal static GameWindow _window;
+    private static Scene _currentScene;
+
+    public static void Initialize(Scene scene)
+    {
+        _currentScene = scene;
+        
+        Logger.Info("Lunacy Engine successfully initialized");
+    }
     
-    public static void Initialize(int width = 800, int height = 600, string windowTitle = "Lunacy Game")
+    public static void Run(int width = 800, int height = 600, string windowTitle = "Lunacy Game")
     {
         Logger.Info("Creating Engine Windows");
         //Create window settings from passed parameters and create window
@@ -26,6 +34,16 @@ public static class LunacyEngine
         while (!windowShouldClose)
         {
             _window.ProcessEvents(1);
+
+            //Loop over all objects and update them
+            foreach (GameObject obj in _currentScene.GetSceneObjects())
+            {
+                obj.Update();
+            }
+            Logger.Info("Update Finished for frame");
+            
+            
+            _window.SwapBuffers();
         }
     }
 

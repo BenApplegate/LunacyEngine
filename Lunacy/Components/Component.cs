@@ -1,7 +1,13 @@
-﻿namespace Lunacy.Components;
+﻿using Lunacy.Core;
 
-public interface Component
+namespace Lunacy.Components;
+
+public class Component
 {
-    public virtual void Update(){}
+    protected internal GameObject gameObject {  get;  internal set; }
+    
+    public virtual void OnAwake(){}
+    public virtual void OnUpdate(){}
     public virtual void OnRender(){}
+    
 }
