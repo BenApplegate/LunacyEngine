@@ -15,9 +15,20 @@ public class Program
         GameObject obj = new GameObject(scene, "Test Triangle");
         Shader triangleShader = Shader.DefaultUnlit();
         Mesh triangleMesh = new Mesh();
-        triangleMesh.AddVertex(new Vector3(-.5f, -.5f, 0f));
-        triangleMesh.AddVertex(new Vector3(.5f, -.5f, 0f));
-        triangleMesh.AddVertex(new Vector3(0f, .5f, 0f));
+        
+        triangleMesh.SetVerticies(new List<float>(new float[]{
+            0.5f,  0.5f, 0.0f,  // top right
+            0.5f, -0.5f, 0.0f,  // bottom right
+            -0.5f, -0.5f, 0.0f,  // bottom left
+            -0.5f,  0.5f, 0.0f   // top left 
+        }));
+        
+        triangleMesh.SetIndicies(new List<uint>(new uint[]
+        {
+            0, 1, 3,
+            1, 2, 3
+        }));
+        
         triangleMesh.UpdateMeshData();
         obj.AddComponent(new MeshRenderer2D(triangleMesh, triangleShader));
 

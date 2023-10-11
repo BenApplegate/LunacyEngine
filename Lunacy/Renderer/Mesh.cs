@@ -8,12 +8,13 @@ namespace Lunacy.Renderer;
 public class Mesh
 {
     private List<float> verticies = new List<float>();
-    private List<float> triangleIndicies = new List<float>();
+    private List<uint> triangleIndicies = new List<uint>();
     public bool isDynamic;
 
     private bool isGenerated = false;
     internal int _VBO;
     internal int _VAO;
+    internal int _EBO;
     
 
     public Mesh(bool dynamic = false)
@@ -21,23 +22,23 @@ public class Mesh
         isDynamic = dynamic;
     }
 
-    public void AddVertex(Vector3 location)
+    public void SetVerticies(List<float> verticies)
     {
-        verticies.Add(location.X);
-        verticies.Add(location.Y);
-        verticies.Add(location.Z);
+        this.verticies = verticies;
+    }
+
+    public void SetIndicies(List<uint> indicies)
+    {
+        this.triangleIndicies = indicies;
     }
 
     public void UpdateMeshData()
     {
-        foreach (float f in verticies)
-        {
-            Logger.Warning(f.ToString());
-        }
         if (!isGenerated)
         {
             _VAO = GL.GenVertexArray();
             _VBO = GL.GenBuffer();
+            _EBO = GL.GenBuffer();
 
             isGenerated = true;
         }
@@ -50,6 +51,9 @@ public class Mesh
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
         
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, _EBO);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, triangleIndicies.Count * sizeof(uint), triangleIndicies.ToArray(), isDynamic ? BufferUsageHint.DynamicDraw : BufferUsageHint.StaticDraw);
+        
         //Unbind array to save data
         GL.BindVertexArray(0);
     }
@@ -58,5 +62,7 @@ public class Mesh
     {
         GL.BindVertexArray(_VAO);
     }
+
+    internal int GetIndiciesCount() => triangleIndicies.Count;
 }
 
