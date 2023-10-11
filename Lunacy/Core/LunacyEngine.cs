@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 
 namespace Lunacy.Core;
@@ -14,6 +15,9 @@ public static class LunacyEngine
     private static Thread _renderThread;
     private static Queue<GameObject> _readyToRender;
     private static bool _stopRender = false;
+    private static bool _windowShouldClose = false;
+
+    private static float _aspectRatio;
     
     
     //Render state of zero means objects still need to update
@@ -21,54 +25,60 @@ public static class LunacyEngine
     //Render state of three means buffers are ready to swap
     private static short _renderState = 0;
 
-    public static void Initialize(Scene scene)
+    public static void Initialize(Scene scene, int width = 800, int height = 600, string windowTitle = "Lunacy Game", Version? openGLVersion = null)
     {
         Logger.Initialize();
         _currentScene = scene;
         _renderThread = new Thread(RenderThread);
         _readyToRender = new Queue<GameObject>();
         
-        Logger.Info("Lunacy Engine successfully initialized");
-    }
-    
-    public static void Run(int width = 800, int height = 600, string windowTitle = "Lunacy Game", Version? openGLVersion = null)
-    {
-        if (openGLVersion == null)
-        {
-            openGLVersion = new Version(3, 3);
-        }
         Logger.Info("Creating Engine Windows");
+
+        _aspectRatio = (float)width / height;
+
+        if (openGLVersion == null) openGLVersion = new Version(3, 3);
+        
         //Create window settings from passed parameters and create window
         var windowSettings = new NativeWindowSettings() { Size = (width, height), Title = windowTitle,
             API = ContextAPI.OpenGL, APIVersion = openGLVersion};
         _window = new GameWindow(GameWindowSettings.Default, windowSettings);
         
         //Setup callback for window close event
-        bool windowShouldClose = false;
         _window.Closing += args =>
         {
-            windowShouldClose = true;
+            _windowShouldClose = true;
         };
 
         _window.Resize += args =>
         {
+            _aspectRatio = (float)args.Width / args.Height;
             GL.Viewport(0, 0, args.Width, args.Height);
         };
         
-        _renderThread.Start();
+        if (openGLVersion == null)
+        {
+            openGLVersion = new Version(3, 3);
+        }
+        
         _window.MakeCurrent();
         GL.Viewport(0, 0, width, height);
         
-        
+        Logger.Info("Lunacy Engine successfully initialized");
+    }
+    
+    public static void Run()
+    {
+        // _renderThread.Start();
+
         //Event Loop
         Logger.Info("Starting Engine Event Loop");
-        while (!windowShouldClose)
+        while (!_windowShouldClose)
         {
-            _window.ProcessEvents(1);
-            
+            _window.ProcessEvents(0);
+
             //Clear Buffers and reset internal render state
             GL.Enable(EnableCap.DepthTest);
-            GL.ClearColor(1, 1, 1, 1);
+            GL.ClearColor(.1f, .1f, .1f, 1);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             _renderState = 0;
 
@@ -87,6 +97,8 @@ public static class LunacyEngine
             while (_renderState != 2)
             {
                 //Wait for Render thread to finish if needed
+                _readyToRender.Dequeue().Render();
+                if (_readyToRender.Count == 0) _renderState = 2;
             }
             
             _window.SwapBuffers();
@@ -97,6 +109,7 @@ public static class LunacyEngine
 
     private static void RenderThread()
     {
+        _window.MakeCurrent();
         while (!_stopRender)
         {
             if (_renderState == 2)
@@ -125,6 +138,16 @@ public static class LunacyEngine
         
         
         Logger.Warning("Render Thread Stopping");
+    }
+
+    public static bool GetKeyDown(Keys key)
+    {
+        return _window.IsKeyPressed(key);
+    }
+
+    public static float GetAspectRatio()
+    {
+        return _aspectRatio;
     }
 
     public static void Dispose()
