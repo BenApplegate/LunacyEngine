@@ -62,7 +62,7 @@ public static class LunacyEngine
     
     public static void Run()
     {
-        _renderThread.Start();
+        // _renderThread.Start();
 
         //Event Loop
         Logger.Info("Starting Engine Event Loop");
@@ -91,6 +91,8 @@ public static class LunacyEngine
             while (_renderState != 2)
             {
                 //Wait for Render thread to finish if needed
+                _readyToRender.Dequeue().Render();
+                if (_readyToRender.Count == 0) _renderState = 2;
             }
             
             _window.SwapBuffers();
@@ -101,6 +103,7 @@ public static class LunacyEngine
 
     private static void RenderThread()
     {
+        _window.MakeCurrent();
         while (!_stopRender)
         {
             if (_renderState == 2)
