@@ -9,7 +9,7 @@ public static class Logger
 #pragma warning disable CS8620
     
     private static Queue<(int, string, MethodBase)> _messageQueue = new Queue<(int, string, MethodBase)>();
-    private static bool shouldClose = false;
+    private static bool shouldClose = true;
 
     private static void LoggerThread()
     {
@@ -52,6 +52,7 @@ public static class Logger
 
     internal static void Initialize()
     {
+        shouldClose = false;
         new Thread(LoggerThread).Start();
     }
 
@@ -72,6 +73,11 @@ public static class Logger
 
     public static void Info(string? contents = "")
     {
+        if (shouldClose)
+        {
+            MessageBuilder(new[] {ConsoleColor.White, ConsoleColor.DarkMagenta, ConsoleColor.Cyan, ConsoleColor.White}, new[] {$"[{DateTime.Now.ToString()}]", "[LOGGER THREAD DISPOSED]", "[INFO]: ", contents});
+            return;
+        }
         lock (_messageQueue)
         {
             _messageQueue.Enqueue((0, contents, new StackTrace().GetFrame(1).GetMethod()));
@@ -81,6 +87,11 @@ public static class Logger
     
     public static void Error(string? contents = "")
     {
+        if (shouldClose)
+        {
+            MessageBuilder(new[] {ConsoleColor.White, ConsoleColor.DarkMagenta, ConsoleColor.Red, ConsoleColor.White}, new[] {$"[{DateTime.Now.ToString()}]", "[LOGGER THREAD DISPOSED]", "[ERROR]: ", contents});
+            return;
+        }
         lock (_messageQueue)
         {
             _messageQueue.Enqueue((2, contents, new StackTrace().GetFrame(1).GetMethod()));
@@ -90,6 +101,11 @@ public static class Logger
     
     public static void Warning(string? contents = "")
     {
+        if (shouldClose)
+        {
+            MessageBuilder(new[] {ConsoleColor.White, ConsoleColor.DarkMagenta, ConsoleColor.Yellow, ConsoleColor.White}, new[] {$"[{DateTime.Now.ToString()}]", "[LOGGER THREAD DISPOSED]", "[WARNING]: ", contents});
+            return;
+        }
         lock (_messageQueue)
         {
             _messageQueue.Enqueue((1, contents, new StackTrace().GetFrame(1).GetMethod()));
