@@ -1,4 +1,6 @@
 ﻿using Lunacy.Core;
+using Lunacy.Renderer;
+using Lunacy.Utils;
 
 namespace SampleGame;
 
@@ -6,17 +8,12 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Scene scene = new Scene();
-        for (int i = 0; i < 50; i++)
-        {
-            GameObject testObject = new GameObject(scene, $"test_object_{i}");
-            testObject.AddComponent(new TestComponent());
-        }
+        Logger.Info("Test");
+        LunacyEngine.Initialize(new Scene());
+
         
-        
-        LunacyEngine.Initialize(scene);
-        LunacyEngine.Run();
-        
+        var shader = Shader.DefaultUnlit();
+        shader.Attach();
         
         LunacyEngine.Dispose();
     }

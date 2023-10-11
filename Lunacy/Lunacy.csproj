@@ -10,4 +10,11 @@
       <PackageReference Include="OpenTK" Version="4.8.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\Shaders\Unlit\unlit.vertex" />
+      <EmbeddedResource Include="Resources\Shaders\Unlit\unlit.vertex" />
+      <None Remove="Resources\Shaders\Unlit\unlit.frag" />
+      <EmbeddedResource Include="Resources\Shaders\Unlit\unlit.frag" />
+    </ItemGroup>
+
 </Project>
