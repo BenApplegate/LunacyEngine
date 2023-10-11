@@ -3,11 +3,14 @@ using System.Reflection;
 using System.Resources;
 using Lunacy.Utils;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace Lunacy.Renderer;
 
 public class Shader
 {
+    private Vector4 _albedo = Vector4.One;
+    private Matrix4 _transform = Matrix4.Identity;
     private int _programHandle;
     private bool _disposed = false;
     private Shader()
@@ -31,7 +34,6 @@ public class Shader
 
     ~Shader()
     {
-        Console.WriteLine("IN DESTRUCTOR");
         //We cannot dispose here because its possible for the GL context to no longer exist
         //But we can give a warning to the user
         if (!_disposed)
@@ -110,6 +112,8 @@ public class Shader
         GL.DeleteShader(_fragmentShader);
         
         Logger.Info("Finished Compiling and Linking shader program");
+
+        s.SetAlbedo(Vector4.One);
         
         return s;
     }
@@ -182,6 +186,46 @@ public class Shader
         
         Logger.Info("Finished Compiling and Linking shader program");
         
+        s.SetAlbedo(Vector4.One);
+        
         return s;
+    }
+
+    public void SetVec4(string uniformName, Vector4 color)
+    {
+        int uniformLocation = GL.GetUniformLocation(_programHandle, uniformName);
+        if (uniformLocation == -1)
+        {
+            Logger.Warning($"{uniformName} is not a valid uniform name for this shader");
+            return;
+        }
+        GL.UseProgram(_programHandle);
+        GL.Uniform4(uniformLocation, color);
+    }
+
+    public void SetAlbedo(Vector4 albedo)
+    {
+        _albedo = albedo;
+        int uniformLocation = GL.GetUniformLocation(_programHandle, "albedo");
+        if (uniformLocation == -1)
+        {
+            Logger.Warning($"Shader does not have albedo uniform");
+            return;
+        }
+        GL.UseProgram(_programHandle);
+        GL.Uniform4(uniformLocation, _albedo);
+    }
+
+    internal void SetTransformMatrix(Matrix4 transform)
+    {
+        _transform = transform;
+        int uniformLocation = GL.GetUniformLocation(_programHandle, "transform");
+        if (uniformLocation == -1)
+        {
+            Logger.Warning($"Shader does not have transform matrix uniform");
+            return;
+        }
+        GL.UseProgram(_programHandle);
+        GL.UniformMatrix4(uniformLocation, false, ref _transform);
     }
 }

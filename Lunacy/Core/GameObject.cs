@@ -1,5 +1,6 @@
-﻿using System.Numerics;
+﻿
 using Lunacy.Components;
+using OpenTK.Mathematics;
 
 namespace Lunacy.Core;
 
