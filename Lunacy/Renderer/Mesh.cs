@@ -16,10 +16,16 @@ public class Mesh
     internal int _VAO;
     internal int _EBO;
     
-
     public Mesh(bool dynamic = false)
     {
         isDynamic = dynamic;
+    }
+
+    public void Dispose()
+    {
+        GL.DeleteBuffer(_VBO);
+        GL.DeleteBuffer(_EBO);
+        GL.DeleteVertexArray(_VAO);
     }
 
     public void SetVerticies(List<float> verticies)
