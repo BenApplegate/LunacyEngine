@@ -33,6 +33,7 @@ public class MeshRenderer2D : Component
         
         //Logger.Info("Rendering");
         _shader.Attach();
+        _shader.BindTextures();
         _mesh.Bind();
         GL.DrawElements(BeginMode.Triangles, _mesh.GetIndiciesCount(), DrawElementsType.UnsignedInt, 0);
     }

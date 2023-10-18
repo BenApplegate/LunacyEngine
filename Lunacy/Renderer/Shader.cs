@@ -10,6 +10,8 @@ namespace Lunacy.Renderer;
 public class Shader
 {
     private Vector4 _albedo = Vector4.One;
+    private Texture _albedoTexture;
+    private List<Texture> _textures = new List<Texture>();
     private Matrix4 _transform = Matrix4.Identity;
     private int _programHandle;
     private bool _disposed = false;
@@ -30,6 +32,21 @@ public class Shader
     public void Attach()
     {
         GL.UseProgram(_programHandle);
+    }
+
+    public void BindTextures()
+    {
+        if (_albedoTexture is not null)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, _albedoTexture._imageHandle);
+        }
+
+        for (int i = 0; i < _textures.Count; i++)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0 + i + 1);
+            GL.BindTexture(TextureTarget.Texture2D, _textures[i]._imageHandle);
+        }
     }
 
     ~Shader()
@@ -206,6 +223,7 @@ public class Shader
     public void SetAlbedo(Vector4 albedo)
     {
         _albedo = albedo;
+        Attach();
         int uniformLocation = GL.GetUniformLocation(_programHandle, "albedo");
         if (uniformLocation == -1)
         {
@@ -219,6 +237,7 @@ public class Shader
     internal void SetTransformMatrix(Matrix4 transform)
     {
         _transform = transform;
+        Attach();
         int uniformLocation = GL.GetUniformLocation(_programHandle, "transform");
         if (uniformLocation == -1)
         {
@@ -228,4 +247,38 @@ public class Shader
         GL.UseProgram(_programHandle);
         GL.UniformMatrix4(uniformLocation, false, ref _transform);
     }
+
+    public void SetAlbedoTexture(Texture albedoTexture)
+    {
+        this._albedoTexture = albedoTexture;
+        Attach();
+        int uniformLocation = GL.GetUniformLocation(_programHandle, "albedoTexture");
+        if (uniformLocation == -1)
+        {
+            Logger.Warning($"Shader does not have albedo texture uniform");
+            return;
+        }
+        GL.Uniform1(uniformLocation, 0);
+    }
+
+    public void SetTexture(Texture texture, string location)
+    {
+        if (_textures.Count == 15)
+        {
+            Logger.Warning("You have run out of available texture slots for this shader, texture did not attatch");
+            return;
+        }
+        _textures.Add(texture);
+        Attach();
+        int textureID = _textures.Count;
+        int uniformLocation = GL.GetUniformLocation(_programHandle, location);
+        if (uniformLocation == -1)
+        {
+            Logger.Warning($"Shader does not have \"{location}\" uniform");
+            return;
+        }
+        GL.Uniform1(uniformLocation, textureID);
+
+    }
+    
 }
