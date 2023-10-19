@@ -8,5 +8,5 @@ uniform sampler2D albedoTexture;
 
 void main()
 {
-    FragColor = mix(texture(albedoTexture, texCoord), texture(overlayTexture, texCoord), .2) * albedo;
+    FragColor = texture(albedoTexture, texCoord) * albedo;
 } 

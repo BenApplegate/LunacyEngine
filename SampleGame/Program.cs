@@ -44,6 +44,7 @@ public class Program
         
         triangleMesh.UpdateMeshData();
         obj.AddComponent(new MeshRenderer2D(triangleMesh, triangleShader));
+        obj.AddComponent(new ObjectSettingsEditor());
 
         LunacyEngine.Run();
         
