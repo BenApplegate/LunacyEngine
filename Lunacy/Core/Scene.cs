@@ -12,6 +12,11 @@ public class Scene
         return new List<GameObject>(_sceneObjects);
     }
 
+    internal List<GameObject> RefSceneObjects()
+    {
+        return _sceneObjects;
+    }
+
     internal void AddSceneObject(GameObject obj)
     {
         _sceneObjects.Add(obj);

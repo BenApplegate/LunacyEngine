@@ -83,7 +83,7 @@ public static class LunacyEngine
             _renderState = 0;
 
             //Loop over all objects and update them
-            foreach (GameObject obj in _currentScene.GetSceneObjects())
+            foreach (GameObject obj in _currentScene.RefSceneObjects())
             {
                 obj.Update();
                 //After an object finishes updating, add it to render queue

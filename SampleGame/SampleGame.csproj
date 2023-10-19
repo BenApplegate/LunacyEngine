@@ -11,4 +11,17 @@
       <ProjectReference Include="..\Lunacy\Lunacy.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Resources" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\Images\milkman.png" />
+      <EmbeddedResource Include="Resources\Images\milkman.png" />
+      <None Remove="Resources\Images\wall.jpg" />
+      <EmbeddedResource Include="Resources\Images\wall.jpg" />
+      <None Remove="Resources\Images\face.png" />
+      <EmbeddedResource Include="Resources\Images\face.png" />
+    </ItemGroup>
+
 </Project>
