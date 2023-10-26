@@ -63,6 +63,12 @@ public static class LunacyEngine
 
         _window = new GameWindow(GameWindowSettings.Default, windowSettings);
         
+        //Setup callback for window close event
+        _window.Closing += args =>
+        {
+            _windowShouldClose = true;
+        };
+        
         _window.Resize += args =>
         {
             _aspectRatio = (float)args.Width / args.Height;
