@@ -13,11 +13,11 @@ public class TestComponent : Component
 
     public override void OnUpdate()
     {
-        Logger.Info($"Update has been called for {gameObject.GetName()}");
+        //Logger.Info($"Update has been called for {gameObject.GetName()}");
     }
 
     public override void OnRender()
     {
-        Logger.Info($"Render has been called for {gameObject.GetName()}");
+        //Logger.Info($"Render has been called for {gameObject.GetName()}");
     }
 }
