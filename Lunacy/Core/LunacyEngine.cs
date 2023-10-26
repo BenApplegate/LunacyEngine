@@ -47,6 +47,8 @@ public static class LunacyEngine
         if (engineSettings.OpenGLVersion == null)
             engineSettings.OpenGLVersion = new Version(3, 3);
 
+        _engineSettings = engineSettings;
+        
         NativeWindowSettings windowSettings = new NativeWindowSettings
         {
             Title = engineSettings.Title,
@@ -63,10 +65,7 @@ public static class LunacyEngine
         _engineSettings.NativeWindowSettings = windowSettings;
 
         _window = new GameWindow(GameWindowSettings.Default, windowSettings);
-        
-        // Ensure that _engineSettings have all required information, including the native window settings
-        _engineSettings = engineSettings;
-        
+
         //Setup callback for window close event
         _window.Closing += args =>
         {
