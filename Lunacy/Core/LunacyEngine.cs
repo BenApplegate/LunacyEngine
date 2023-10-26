@@ -1,7 +1,9 @@
-﻿using Lunacy.Utils;
+﻿using System.Diagnostics;
+using Lunacy.Utils;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using ImGuiNET;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -21,6 +23,8 @@ public static class LunacyEngine
     private static bool _windowShouldClose = false;
 
     private static float _aspectRatio;
+    
+    private static ImGuiController _imGuiController;
     
     
     
@@ -73,9 +77,23 @@ public static class LunacyEngine
         {
             _aspectRatio = (float)args.Width / args.Height;
             GL.Viewport(0, 0, args.Width, args.Height);
+            
+            _imGuiController.WindowResized(args.Width, args.Height);
+        };
+        
+        _window.TextInput += args =>
+        {
+            _imGuiController.PressChar((char)args.Unicode);
+        };
+
+        _window.MouseWheel += args =>
+        {
+            _imGuiController.MouseScroll(args.Offset);
         };
 
         _window.MakeCurrent();
+        _imGuiController = new ImGuiController(engineSettings.WindowSize.X, engineSettings.WindowSize.Y);
+        
         GL.Viewport(0, 0, engineSettings.WindowSize.X, engineSettings.WindowSize.Y);
         
         Logger.Info("Lunacy Engine successfully initialized");
@@ -98,6 +116,8 @@ public static class LunacyEngine
 
         //Event Loop
         Logger.Info("Starting Engine Event Loop");
+        
+        Stopwatch frameTimes = Stopwatch.StartNew();
         while (!_windowShouldClose)
         {
             _window.ProcessEvents(0);
@@ -107,6 +127,9 @@ public static class LunacyEngine
             GL.ClearColor(.1f, .1f, .1f, 1);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             _renderState = 0;
+            
+            _imGuiController.Update(_window, frameTimes.ElapsedMilliseconds/1000f);
+            frameTimes.Restart();
 
             //Loop over all objects and update them
             foreach (GameObject obj in _currentScene.GetSceneObjects())
@@ -126,6 +149,8 @@ public static class LunacyEngine
                 _readyToRender.Dequeue().Render();
                 if (_readyToRender.Count == 0) _renderState = 2;
             }
+            
+            _imGuiController.Render();
             
             _window.SwapBuffers();
         }
@@ -179,6 +204,7 @@ public static class LunacyEngine
     public static void Dispose()
     {
         Logger.Warning("Engine has been disposed, Do not attempt to use engine until reinitialized");
+        _imGuiController.Dispose();
         _window.Dispose();
         Logger.Dispose();
     }
