@@ -12,6 +12,8 @@ namespace Lunacy.Core;
 public static class LunacyEngine
 {
     internal static GameWindow _window;
+    internal static LunacyEngineSettings _engineSettings;
+    
     private static Scene _currentScene;
 
     private static Thread _renderThread;
@@ -29,31 +31,38 @@ public static class LunacyEngine
     //Render state of three means buffers are ready to swap
     private static short _renderState = 0;
 
-    public static void Initialize(Scene scene, int width = 800, int height = 600, string windowTitle = "Lunacy Game", Version? openGLVersion = null)
+    public static void Initialize(LunacyEngineSettings engineSettings, Scene currentScene)
     {
         Logger.Initialize();
-
-        _currentScene = scene;
+        _currentScene = currentScene;
         _renderThread = new Thread(RenderThread);
         _readyToRender = new Queue<GameObject>();
-        
+
         Logger.Info("Creating Engine Windows");
-
-        _aspectRatio = (float)width / height;
-
-        if (openGLVersion == null) openGLVersion = new Version(3, 3);
         
-        //Create window settings from passed parameters and create window
-        var windowSettings = new NativeWindowSettings() { Size = (width, height), Title = windowTitle,
-            API = ContextAPI.OpenGL, APIVersion = openGLVersion};
+        _aspectRatio = (float)engineSettings.WindowSize.X / engineSettings.WindowSize.Y;
+        _engineSettings = engineSettings;
+
+        if (engineSettings.OpenGLVersion == null)
+            engineSettings.OpenGLVersion = new Version(3, 3);
+
+        NativeWindowSettings windowSettings = new NativeWindowSettings
+        {
+            Title = engineSettings.Title,
+            Size = engineSettings.WindowSize,
+            API = ContextAPI.OpenGL,
+            APIVersion = engineSettings.OpenGLVersion,
+            Icon = engineSettings.WindowIcon,
+            Location = engineSettings.WindowLocation,
+            MaximumSize = engineSettings.MaximumSize,
+            Vsync = engineSettings.VSync,
+            WindowBorder = engineSettings.WindowBorder,
+            WindowState = engineSettings.WindowState,
+        };
+        _engineSettings.NativeWindowSettings = windowSettings;
+
         _window = new GameWindow(GameWindowSettings.Default, windowSettings);
         
-        //Setup callback for window close event
-        _window.Closing += args =>
-        {
-            _windowShouldClose = true;
-        };
-
         _window.Resize += args =>
         {
             _aspectRatio = (float)args.Width / args.Height;
@@ -71,19 +80,25 @@ public static class LunacyEngine
         {
             _imGuiController.MouseScroll(args.Offset);
         };
-        
-        if (openGLVersion == null)
-        {
-            openGLVersion = new Version(3, 3);
-        }
-        
+
         _window.MakeCurrent();
         
-        _imGuiController = new ImGuiController(width, height);
+        _imGuiController = new ImGuiController(engineSettings.WindowSize.X, engineSettings.WindowSize.Y);
         
-        GL.Viewport(0, 0, width, height);
+        GL.Viewport(0, 0, engineSettings.WindowSize.X, engineSettings.WindowSize.Y);
         
         Logger.Info("Lunacy Engine successfully initialized");
+
+    }
+
+    public static void Initialize(Scene scene, int width = 800, int height = 600, string windowTitle = "Lunacy Game", Version? openGLVersion = null)
+    {
+        Initialize(new LunacyEngineSettings
+        {
+            Title = windowTitle,
+            WindowSize = (width, height),
+            OpenGLVersion = openGLVersion,
+        }, scene);
     }
     
     public static void Run()
