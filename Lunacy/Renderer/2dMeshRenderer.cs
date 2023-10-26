@@ -25,14 +25,15 @@ public class MeshRenderer2D : Component
         }
 
         Matrix4 transform =
-            Matrix4.CreateTranslation(gameObject.location)
-                                             * Matrix4.CreateFromQuaternion(Quaternion.FromEulerAngles(gameObject.rotation))
-                                             * Matrix4.CreateScale(new Vector3(1 / LunacyEngine.GetAspectRatio(), 1, 1)) 
-                                             * Matrix4.CreateScale(gameObject.scale);
+            Matrix4.CreateFromQuaternion(Quaternion.FromEulerAngles(gameObject.rotation))
+            * Matrix4.CreateScale(new Vector3(1 / LunacyEngine.GetAspectRatio(), 1, 1))
+            * Matrix4.CreateScale(gameObject.scale)
+            * Matrix4.CreateTranslation(gameObject.location);
         _shader.SetTransformMatrix(transform);
         
         //Logger.Info("Rendering");
         _shader.Attach();
+        _shader.BindTextures();
         _mesh.Bind();
         GL.DrawElements(BeginMode.Triangles, _mesh.GetIndiciesCount(), DrawElementsType.UnsignedInt, 0);
     }
