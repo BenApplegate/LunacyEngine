@@ -7,6 +7,9 @@ namespace Lunacy.Renderer;
 
 public class Mesh
 {
+    public static Mesh quad;
+    public static Mesh cube;
+    
     private List<float> verticies = new List<float>();
     private List<uint> triangleIndicies = new List<uint>();
     private List<float> UVCoordinates = new List<float>();
@@ -20,6 +23,139 @@ public class Mesh
     public Mesh(bool dynamic = false)
     {
         isDynamic = dynamic;
+    }
+
+    internal static void InitDefaultMeshes()
+    {
+        //INIT QUAD
+        quad = new Mesh();
+        quad.SetVerticies(new List<float>(new float[]{
+            0.5f,  0.5f, 0.0f,  // top right
+            0.5f, -0.5f, 0.0f,  // bottom right
+            -0.5f, -0.5f, 0.0f,  // bottom left
+            -0.5f,  0.5f, 0.0f   // top left 
+        }));
+        
+        quad.SetIndicies(new List<uint>(new uint[]
+        {
+            0, 1, 3,
+            1, 2, 3
+        }));
+        
+        quad.SetUVCoordinates(new List<float>(new float[]
+        {
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1
+        }));
+        
+        quad.UpdateMeshData();
+        
+        
+        //INIT CUBE
+        cube = new Mesh();
+        cube.SetVerticies(new List<float>(new float[]
+        {
+            -1, -1, 1, //Front Bottom Left 0
+            1, -1, 1, //Front Bottom Right 1
+            -1, 1, 1, //Front Top Left 2
+            1, 1, 1, //Front Top Right 3
+            
+            1, -1, 1, //Right Bottom Left 4
+            1, -1, -1, //Right Bottom Right 5
+            1, 1, 1, //Right Top Left 6
+            1, 1, -1, //Right Top Right 7
+            
+            1, -1, -1, //Back Bottom Left 8
+            -1, -1, -1, //Back Bottom Right 9
+            1, 1, -1, //Back Top Left 10
+            -1, 1, -1, //Back Top Right 11
+            
+            -1, -1, -1, //Left Bottom Left 12
+            -1, -1, 1, //Left Bottom Right 13
+            -1, 1, -1, //Left Top Left 14
+            -1, 1, 1, //Left Top Right 15
+            
+            -1, 1, 1, // Top Bottom Left 16
+            1, 1, 1, //Top Bottom Right 17
+            -1, 1, -1, //Top Top Left 18
+            1, 1, -1, //Top Top Right 19
+            
+            -1, -1, 1, //Bottom Top Left 20
+            1, -1, 1, //Bottom Top Right 21
+            -1, -1, -1, //Bottom Bottom Left 22
+            1, -1, -1 // Bottom Bottom Right 23
+            
+        }));
+        
+        cube.SetIndicies(new List<uint>(new uint[]
+        {
+            //Front face
+            0, 1, 2,
+            1, 3, 2,
+            
+            //Right face
+            4, 5, 6,
+            5, 7, 6,
+            
+            //Back Face
+            8, 9, 10,
+            9, 11, 10,
+            
+            //Left Face
+            12, 13, 14,
+            13, 15, 14,
+            
+            //Top Face
+            16, 17, 18,
+            17, 19, 18,
+            
+            //Bottom Face
+            22, 23, 20,
+            23, 21, 20
+        }));
+
+        cube.SetUVCoordinates(new List<float>(new float[]
+        {
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1,
+            
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1,
+            
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1,
+            
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1,
+            
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1,
+            
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1,
+        }));
+        
+        cube.UpdateMeshData();
+    }
+
+    internal static void DisposeDefaultMeshes()
+    {
+        quad.Dispose();
+        cube.Dispose();
     }
 
     public void Dispose()
