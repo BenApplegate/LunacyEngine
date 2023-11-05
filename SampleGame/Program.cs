@@ -24,8 +24,7 @@ public class Program
         GameObject obj = new GameObject(scene, "Test Triangle");
         Shader triangleShader = Shader.DefaultUnlit();
         Mesh triangleMesh = new Mesh();
-        Texture milkmanTexture = Texture.LoadFromStream(Assembly.GetExecutingAssembly()
-            .GetManifestResourceStream("SampleGame.Resources.Images.wall.jpg"));
+        Texture milkmanTexture = Texture.FromColor(100, 255, 10);
 
         triangleShader.SetAlbedoTexture(milkmanTexture);
 

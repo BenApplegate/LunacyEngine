@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using StbImageSharp;
 
 namespace Lunacy.Renderer;
@@ -54,5 +55,25 @@ public class Texture
         
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, _image.Width, _image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, _image.Data);
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+    }
+
+    public static Texture FromColor(byte r, byte g, byte b, byte a = 255, TextureMinFilter minFilter = TextureMinFilter.LinearMipmapLinear, TextureMagFilter magFilter = TextureMagFilter.Linear)
+    {
+        Texture t = new Texture
+        {
+            _imageHandle = GL.GenTexture()
+        };
+
+        GL.BindTexture(TextureTarget.Texture2D, t._imageHandle);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)minFilter);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) magFilter);
+
+        byte[] data = new[] { r, g, b, a };
+        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, 1, 1, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+        return t;
     }
 }
