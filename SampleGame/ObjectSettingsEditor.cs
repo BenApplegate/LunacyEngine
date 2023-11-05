@@ -24,8 +24,6 @@ public class ObjectSettingsEditor : Component
         
         ImGui.Begin($"Object settings editor ({gameObject.GetName()})");
         ImGui.SetWindowFontScale(2);
-        ImGui.ColorEdit3("Albedo", ref color);
-        gameObject.GetComponent<MeshRenderer2D>()!.GetShader().SetAlbedo(new Vector4(color.X, color.Y, color.Z, 1));
         ImGui.DragFloat3("Location", ref location, .01f);
         gameObject.location = new Vector3(location.X, location.Y, location.Z);
         ImGui.DragFloat3("Rotation", ref rotation);
