@@ -49,6 +49,21 @@ public class Shader
         }
     }
 
+    public void UnbindTextures()
+    {
+        if (_albedoTexture is not null)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+
+        for (int i = 0; i < _textures.Count; i++)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0 + i + 1);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+    }
+
     ~Shader()
     {
         //We cannot dispose here because its possible for the GL context to no longer exist

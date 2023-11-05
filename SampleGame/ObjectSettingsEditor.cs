@@ -22,7 +22,7 @@ public class ObjectSettingsEditor : Component
         scale = new System.Numerics.Vector3(gameObject.scale.X, gameObject.scale.Y, gameObject.scale.Z);
 
         
-        ImGui.Begin("Object settings editor");
+        ImGui.Begin($"Object settings editor ({gameObject.GetName()})");
         ImGui.SetWindowFontScale(2);
         ImGui.ColorEdit3("Albedo", ref color);
         gameObject.GetComponent<MeshRenderer2D>()!.GetShader().SetAlbedo(new Vector4(color.X, color.Y, color.Z, 1));
