@@ -34,6 +34,6 @@ public class Camera : Component
         front.Y = (float)Math.Sin(pitch);
         front.X = (float)Math.Cos(pitch) * (float)Math.Sin(yaw);
 
-        return Matrix4.LookAt(gameObject.location, gameObject.location + front, Vector3.UnitY);
+        return Matrix4.LookAt(gameObject.location, gameObject.location + front, Quaternion.FromAxisAngle(front, roll) * Vector3.UnitY);
     }
 }
