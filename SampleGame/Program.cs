@@ -3,6 +3,7 @@ using Lunacy.Core;
 using Lunacy.Renderer;
 using Lunacy.Utils;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 
 namespace SampleGame;
 
@@ -10,8 +11,15 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        LunacyEngineSettings settings = new LunacyEngineSettings
+        {
+            Title = "Sample Lunacy Project",
+            WindowState = WindowState.Normal,
+            WindowBorder = WindowBorder.Resizable,
+        };
+        
         Scene scene = new Scene();
-        LunacyEngine.Initialize(scene);
+        LunacyEngine.Initialize(settings, scene);
         
         GameObject obj = new GameObject(scene, "Test Triangle");
         Shader triangleShader = Shader.DefaultUnlit();
@@ -44,6 +52,7 @@ public class Program
         
         triangleMesh.UpdateMeshData();
         obj.AddComponent(new MeshRenderer2D(triangleMesh, triangleShader));
+        obj.AddComponent(new ObjectSettingsEditor());
 
         LunacyEngine.Run();
         
