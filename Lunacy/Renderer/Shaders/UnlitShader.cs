@@ -135,4 +135,11 @@ public class UnlitShader : Shader
         GL.UseProgram(_programHandle);
         GL.Uniform4(uniformLocation, _tint);
     }
+
+    public void SetAlbedoTexture(Texture texture)
+    {
+        _albedo = texture;
+        _shouldDisposeTexture = false;
+        SetTexture(_albedo, "albedoTexture");
+    }
 }

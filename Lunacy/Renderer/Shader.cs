@@ -9,7 +9,7 @@ namespace Lunacy.Renderer;
 
 public class Shader
 {
-    private List<Texture> _textures = new List<Texture>();
+    private List<(Texture, string)> _textures = new List<(Texture, string)>();
     private Matrix4 _transform = Matrix4.Identity;
     protected int _programHandle;
     private bool _disposed = false;
@@ -36,8 +36,8 @@ public class Shader
     {
         for (int i = 0; i < _textures.Count; i++)
         {
-            GL.ActiveTexture(TextureUnit.Texture0 + i + 1);
-            GL.BindTexture(TextureTarget.Texture2D, _textures[i]._imageHandle);
+            GL.ActiveTexture(TextureUnit.Texture0 + i);
+            GL.BindTexture(TextureTarget.Texture2D, _textures[i].Item1._imageHandle);
         }
     }
 
@@ -45,7 +45,7 @@ public class Shader
     {
         for (int i = 0; i < _textures.Count; i++)
         {
-            GL.ActiveTexture(TextureUnit.Texture0 + i + 1);
+            GL.ActiveTexture(TextureUnit.Texture0 + i);
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
     }
@@ -167,9 +167,31 @@ public class Shader
             Logger.Warning("You have run out of available texture slots for this shader, texture did not attatch");
             return;
         }
-        _textures.Add(texture);
+        
+        //see if location already has assigned texture
+        int arrLocation = -1;
+        for (int i = 0; i < _textures.Count; i++)
+        {
+            if (_textures[i].Item2 == location)
+            {
+                arrLocation = i;
+                break;
+            }
+        }
+
+        int textureID;
+        if (arrLocation != -1)
+        {
+            _textures[arrLocation] = (texture, location);
+            textureID = arrLocation;
+        }
+        else
+        {
+            _textures.Add((texture, location));
+            textureID = _textures.Count() - 1;
+        }
+        
         Attach();
-        int textureID = _textures.Count;
         int uniformLocation = GL.GetUniformLocation(_programHandle, location);
         if (uniformLocation == -1)
         {
