@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Lunacy.Core;
 using Lunacy.Renderer;
+using Lunacy.Renderer.Shaders;
 using Lunacy.Utils;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -22,11 +23,8 @@ public class Program
         LunacyEngine.Initialize(settings, scene);
         
         GameObject obj = new GameObject(scene, "Test Triangle");
-        Shader triangleShader = Shader.DefaultUnlit();
+        Shader triangleShader = new UnlitShader(123, 8, 53);
         Mesh triangleMesh = new Mesh();
-        Texture milkmanTexture = Texture.FromColor(100, 255, 10);
-
-        triangleShader.SetAlbedoTexture(milkmanTexture);
 
         triangleMesh.SetVerticies(new List<float>(new float[]{
             0.5f,  0.5f, 0.0f,  // top right
@@ -55,7 +53,6 @@ public class Program
 
         LunacyEngine.Run();
         
-        milkmanTexture.Dispose();
         triangleShader.Dispose();
         triangleMesh.Dispose();
         LunacyEngine.Dispose();
