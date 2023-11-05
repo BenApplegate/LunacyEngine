@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Lunacy.Components;
 using Lunacy.Core;
 using Lunacy.Renderer;
 using Lunacy.Renderer.Shaders;
@@ -28,7 +29,13 @@ public class Program
         Shader triangleShader = new UnlitShader(texture);
 
         obj.scale = new Vector3(.5f, .5f, .5f);
-        obj.AddComponent(new MeshRenderer2D(Mesh.cube, triangleShader));
+
+        GameObject camObject = new GameObject(scene, "camera");
+        Camera cam = new Camera();
+        camObject.AddComponent(cam);
+        camObject.AddComponent(new ObjectSettingsEditor());
+        
+        obj.AddComponent(new MeshRenderer3D(Mesh.cube, triangleShader, cam));
         obj.AddComponent(new ObjectSettingsEditor());
 
         LunacyEngine.Run();
