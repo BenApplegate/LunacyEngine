@@ -23,38 +23,18 @@ public class Program
         LunacyEngine.Initialize(settings, scene);
         
         GameObject obj = new GameObject(scene, "Test Triangle");
-        Shader triangleShader = new UnlitShader(123, 8, 53);
-        Mesh triangleMesh = new Mesh();
+        Texture texture = Texture.LoadFromStream(Assembly.GetExecutingAssembly()
+            .GetManifestResourceStream("SampleGame.Resources.Images.face.png"));
+        Shader triangleShader = new UnlitShader(texture);
 
-        triangleMesh.SetVerticies(new List<float>(new float[]{
-            0.5f,  0.5f, 0.0f,  // top right
-            0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f   // top left 
-        }));
-        
-        triangleMesh.SetIndicies(new List<uint>(new uint[]
-        {
-            0, 1, 3,
-            1, 2, 3
-        }));
-        
-        triangleMesh.SetUVCoordinates(new List<float>(new float[]
-        {
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1
-        }));
-        
-        triangleMesh.UpdateMeshData();
-        obj.AddComponent(new MeshRenderer2D(triangleMesh, triangleShader));
+        obj.scale = new Vector3(.5f, .5f, .5f);
+        obj.AddComponent(new MeshRenderer2D(Mesh.cube, triangleShader));
         obj.AddComponent(new ObjectSettingsEditor());
 
         LunacyEngine.Run();
         
+        texture.Dispose();
         triangleShader.Dispose();
-        triangleMesh.Dispose();
         LunacyEngine.Dispose();
     }
 }

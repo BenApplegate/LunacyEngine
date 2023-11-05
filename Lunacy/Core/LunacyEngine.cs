@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using ImGuiNET;
+using Lunacy.Renderer;
 using Lunacy.Utils;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
@@ -34,6 +35,7 @@ public static class LunacyEngine
     public static void Initialize(LunacyEngineSettings engineSettings, Scene currentScene)
     {
         Logger.Initialize();
+        
         _currentScene = currentScene;
         _renderThread = new Thread(RenderThread);
         _readyToRender = new Queue<GameObject>();
@@ -88,11 +90,14 @@ public static class LunacyEngine
         };
 
         _window.MakeCurrent();
-        
+
+        Mesh.InitDefaultMeshes();
         _imGuiController = new ImGuiController(engineSettings.WindowSize.X, engineSettings.WindowSize.Y);
-        
+
         GL.Viewport(0, 0, engineSettings.WindowSize.X, engineSettings.WindowSize.Y);
-        
+        GL.Enable(EnableCap.CullFace);
+        GL.CullFace(CullFaceMode.Back);
+
         Logger.Info("Lunacy Engine successfully initialized");
 
     }
@@ -201,6 +206,7 @@ public static class LunacyEngine
     {
         Logger.Warning("Engine has been disposed, Do not attempt to use engine until reinitialized");
         _imGuiController.Dispose();
+        Mesh.DisposeDefaultMeshes();
         _window.Dispose();
         Logger.Dispose();
     }
